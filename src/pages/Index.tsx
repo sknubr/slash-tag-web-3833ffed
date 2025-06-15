@@ -1,52 +1,124 @@
-
-import React, { useRef } from "react";
-import CommandBar from "@/components/CommandBar";
-import TagList from "@/components/TagList";
-import { useState } from "react";
-
-/**
- * This is the main desktop app layout for Slash Tag Web.
- */
-const DEMO_TAGS = [
-  { id: 1, name: "/focus", description: "Deep work mode" },
-  { id: 2, name: "/meetings", description: "All scheduled meetings" },
-  { id: 3, name: "/tasks", description: "To-dos and tasks" },
-  { id: 4, name: "/notes", description: "Quick notes" },
-  { id: 5, name: "/inbox", description: "Unsorted items" },
-  { id: 6, name: "/urgent", description: "Requires immediate attention" },
-];
+import React, { useState, useMemo } from "react";
+import Header from "@/components/Header";
+import FilterBar from "@/components/FilterBar";
+import DealGrid from "@/components/DealGrid";
+import { sampleDeals } from "@/data/sampleDeals";
 
 const Index = () => {
-  const [query, setQuery] = useState("");
-  const tagListRef = useRef<HTMLDivElement>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [sortBy, setSortBy] = useState("newest");
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
+  const [loading, setLoading] = useState(false);
 
-  // Basic filter logic for demo
-  const filteredTags = DEMO_TAGS.filter(
-    (t) =>
-      t.name.toLowerCase().includes(query.toLowerCase()) ||
-      t.description.toLowerCase().includes(query.toLowerCase())
-  );
+  // Filter and sort deals based on current state
+  const filteredAndSortedDeals = useMemo(() => {
+    let deals = [...sampleDeals];
+
+    // Filter by search query
+    if (searchQuery.trim()) {
+      deals = deals.filter(deal =>
+        deal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        deal.store.toLowerCase().includes(searchQuery.toLowerCase())
+      );
+    }
+
+    // Sort deals
+    switch (sortBy) {
+      case 'price-low':
+        deals.sort((a, b) => parseFloat(a.price.replace('$', '')) - parseFloat(b.price.replace('$', '')));
+        break;
+      case 'price-high':
+        deals.sort((a, b) => parseFloat(b.price.replace('$', '')) - parseFloat(a.price.replace('$', '')));
+        break;
+      case 'discount':
+        deals.sort((a, b) => {
+          const discountA = a.originalPrice ? (1 - parseFloat(a.price.replace('$', '')) / parseFloat(a.originalPrice.replace('$', ''))) : 0;
+          const discountB = b.originalPrice ? (1 - parseFloat(b.price.replace('$', '')) / parseFloat(b.originalPrice.replace('$', ''))) : 0;
+          return discountB - discountA;
+        });
+        break;
+      case 'rating':
+        deals.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+        break;
+      default:
+        // newest first - keep original order
+        break;
+    }
+
+    return deals;
+  }, [searchQuery, sortBy]);
+
+  const handleSearch = () => {
+    setLoading(true);
+    // Simulate API call
+    setTimeout(() => {
+      setLoading(false);
+    }, 1000);
+  };
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-slate-50 via-blue-50 to-fuchsia-100 flex flex-col items-center justify-start">
-      {/* Desktop app "app bar" look */}
-      <header className="w-full py-8 px-6 flex flex-col items-center">
-        <h1 className="text-[2.8rem] font-extrabold tracking-tight bg-gradient-to-tr from-[#2e1065] via-indigo-800 to-fuchsia-700 bg-clip-text text-transparent drop-shadow-lg mb-1 select-none">
-          Slash Tag Web
-        </h1>
-        <span className="text-muted-foreground text-lg mb-6">
-          Super-fast command bar & tagging demo. Try typing <code className="bg-muted px-1 py-0.5 rounded">/task</code> or <code className="bg-muted px-1 py-0.5 rounded">urgent</code>.
-        </span>
-        <CommandBar value={query} onValueChange={setQuery} />
-      </header>
-      <main
-        ref={tagListRef}
-        className="w-full flex flex-col items-center px-4"
-      >
-        <TagList tags={filteredTags} query={query} />
+    <div className="min-h-screen bg-gray-50">
+      <Header
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        onSearchSubmit={handleSearch}
+      />
+      
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Hero Section */}
+        <div className="text-center mb-12">
+          <h1 className="text-4xl font-bold text-gray-900 mb-4">
+            Find the Best Clearance Deals
+          </h1>
+          <p className="text-xl text-gray-600 max-w-3xl mx-auto">
+            Discover amazing deals from top retailers. Save up to 80% on electronics, fashion, home goods, and more.
+          </p>
+        </div>
+
+        {/* Featured Categories */}
+        <div className="mb-8">
+          <div className="flex flex-wrap justify-center gap-4 mb-8">
+            {['Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Beauty', 'Books'].map((category) => (
+              <button
+                key={category}
+                className="px-4 py-2 bg-white border border-gray-300 rounded-full hover:bg-blue-50 hover:border-blue-300 transition-colors"
+              >
+                {category}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Filter Bar */}
+        <FilterBar
+          sortBy={sortBy}
+          onSortChange={setSortBy}
+          viewMode={viewMode}
+          onViewModeChange={setViewMode}
+          totalDeals={filteredAndSortedDeals.length}
+        />
+
+        {/* Deals Grid */}
+        <DealGrid deals={filteredAndSortedDeals} loading={loading} />
+
+        {/* Load More Button */}
+        <div className="text-center mt-12">
+          <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+            Load More Deals
+          </button>
+        </div>
       </main>
-      <footer className="mt-auto pt-8 pb-4 text-center text-xs text-muted-foreground opacity-60">
-        © {new Date().getFullYear()} Slash Tag Web &mdash; <span className="font-medium">Your productivity starts here.</span>
+
+      <footer className="bg-white border-t border-gray-200 mt-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">DealsHub</h3>
+            <p className="text-gray-600">Your one-stop destination for the best clearance deals online.</p>
+            <div className="mt-6 text-sm text-gray-500">
+              © {new Date().getFullYear()} DealsHub. All rights reserved.
+            </div>
+          </div>
+        </div>
       </footer>
     </div>
   );
