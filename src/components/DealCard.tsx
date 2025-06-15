@@ -1,6 +1,6 @@
 
 import React from "react";
-import { ExternalLink, Star, Clock } from "lucide-react";
+import { ExternalLink, Star, Clock, Heart, Tag, TrendingUp } from "lucide-react";
 
 interface Deal {
   id: number;
@@ -26,44 +26,77 @@ const DealCard: React.FC<DealCardProps> = ({ deal }) => {
     : null;
 
   return (
-    <div className="bg-white rounded-lg border border-gray-200 shadow-sm hover:shadow-md transition-shadow duration-200 overflow-hidden group">
+    <div className="deals-card group overflow-hidden">
       {/* Deal Image */}
-      <div className="relative aspect-square bg-gray-100">
+      <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
         <img 
           src={deal.image} 
           alt={deal.title}
-          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
         />
+        
+        {/* Overlay badges */}
+        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+        
         {discountPercent && (
-          <div className="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-md text-sm font-semibold">
-            -{discountPercent}%
+          <div className="absolute top-3 left-3 flex items-center space-x-1 bg-red-500 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg">
+            <Tag size={14} />
+            <span>-{discountPercent}%</span>
           </div>
         )}
+        
         {deal.timeLeft && (
-          <div className="absolute top-2 right-2 bg-orange-500 text-white px-2 py-1 rounded-md text-xs flex items-center gap-1">
+          <div className="absolute top-3 right-3 flex items-center space-x-1 bg-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg">
             <Clock size={12} />
-            {deal.timeLeft}
+            <span>{deal.timeLeft}</span>
           </div>
         )}
+
+        {/* Wishlist button */}
+        <button className="absolute bottom-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110">
+          <Heart size={16} className="text-gray-600 hover:text-red-500" />
+        </button>
       </div>
 
       {/* Deal Content */}
-      <div className="p-4">
-        <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2 leading-tight">
+      <div className="p-5 space-y-4">
+        {/* Store badge */}
+        <div className="flex items-center justify-between">
+          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
+            {deal.store}
+          </span>
+          {discountPercent && discountPercent >= 50 && (
+            <div className="flex items-center space-x-1 text-green-600">
+              <TrendingUp size={14} />
+              <span className="text-xs font-semibold">Hot Deal</span>
+            </div>
+          )}
+        </div>
+
+        {/* Title */}
+        <h3 className="font-semibold text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
           {deal.title}
         </h3>
         
-        <div className="flex items-center justify-between mb-2">
-          <div className="flex items-center gap-2">
-            <span className="text-2xl font-bold text-red-600">{deal.price}</span>
+        {/* Price section */}
+        <div className="space-y-2">
+          <div className="flex items-baseline space-x-2">
+            <span className="text-2xl font-bold text-gray-900">{deal.price}</span>
             {deal.originalPrice && (
-              <span className="text-gray-500 line-through text-sm">{deal.originalPrice}</span>
+              <span className="text-sm text-gray-500 line-through">{deal.originalPrice}</span>
             )}
           </div>
+          
+          {discountPercent && (
+            <div className="text-sm font-medium text-green-600">
+              You save ${(parseFloat(deal.originalPrice?.replace('$', '') || '0') - parseFloat(deal.price.replace('$', ''))).toFixed(2)}
+            </div>
+          )}
         </div>
 
+        {/* Rating */}
         {deal.rating && (
-          <div className="flex items-center gap-1 mb-3">
+          <div className="flex items-center space-x-2">
             <div className="flex items-center">
               {[...Array(5)].map((_, i) => (
                 <Star 
@@ -77,18 +110,16 @@ const DealCard: React.FC<DealCardProps> = ({ deal }) => {
           </div>
         )}
 
-        <div className="flex items-center justify-between">
-          <span className="text-sm text-gray-600 font-medium">{deal.store}</span>
-          <a 
-            href={deal.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-1 transition-colors"
-          >
-            View Deal
-            <ExternalLink size={14} />
-          </a>
-        </div>
+        {/* Action button */}
+        <a 
+          href={deal.url}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="w-full deals-button-primary flex items-center justify-center space-x-2 group-hover:shadow-lg"
+        >
+          <span>View Deal</span>
+          <ExternalLink size={16} />
+        </a>
       </div>
     </div>
   );
