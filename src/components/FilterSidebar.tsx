@@ -34,7 +34,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
   };
 
   return (
-    <div className="w-64 bg-white border-r border-gray-200 p-4 h-full overflow-y-auto">
+    <div className="w-56 bg-white border-r border-gray-200 p-4 h-full overflow-y-auto">
       <h3 className="font-semibold text-lg mb-4">Filter</h3>
       
       {/* Price Filter */}
@@ -60,7 +60,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
       <Accordion type="multiple" className="w-full">
         {categories.map((category) => (
           <AccordionItem key={category.id} value={category.id} className="border-b border-gray-200">
-            <AccordionTrigger className="text-left font-medium py-3">
+            <AccordionTrigger className="text-left font-medium py-3 text-sm">
               {category.label}
             </AccordionTrigger>
             <AccordionContent className="pb-3">
@@ -82,7 +82,7 @@ const FilterSidebar: React.FC<FilterSidebarProps> = ({
                       onChange={() => handleCategoryToggle(`${category.id}-${sub.toLowerCase()}`)}
                       className="rounded border-gray-300"
                     />
-                    <span className="text-sm text-gray-600">{sub}</span>
+                    <span className="text-xs text-gray-600">{sub}</span>
                   </label>
                 ))}
               </div>

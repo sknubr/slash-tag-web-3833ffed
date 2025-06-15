@@ -34,7 +34,7 @@ const StoreFilter: React.FC<StoreFilterProps> = ({
   const isAllSelected = selectedStores.length === 0;
 
   return (
-    <div className="w-80 bg-white border-l border-gray-200 p-4 h-full overflow-y-auto">
+    <div className="w-72 bg-white border-l border-gray-200 p-4 h-full overflow-y-auto">
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <span className="font-medium">Sort</span>

@@ -107,9 +107,9 @@ const Index = () => {
         onSearchSubmit={handleSearch}
       />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
-        <div className="text-center mb-12">
+        <div className="text-center mb-12 max-w-7xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 mb-4">
             Find the Best Clearance Deals
           </h1>
@@ -119,7 +119,7 @@ const Index = () => {
         </div>
 
         {/* Featured Categories */}
-        <div className="mb-8">
+        <div className="mb-8 max-w-7xl mx-auto">
           <div className="flex flex-wrap justify-center gap-4 mb-8">
             {['Electronics', 'Fashion', 'Home & Garden', 'Sports', 'Beauty', 'Books'].map((category) => (
               <button
@@ -133,17 +133,19 @@ const Index = () => {
         </div>
 
         {/* Main Content with Sidebars */}
-        <div className="flex gap-6">
+        <div className="flex gap-4 max-w-[1600px] mx-auto">
           {/* Left Sidebar - Filters */}
-          <FilterSidebar
-            priceRange={priceRange}
-            onPriceRangeChange={setPriceRange}
-            selectedCategories={selectedCategories}
-            onCategoryChange={setSelectedCategories}
-          />
+          <div className="flex-shrink-0">
+            <FilterSidebar
+              priceRange={priceRange}
+              onPriceRangeChange={setPriceRange}
+              selectedCategories={selectedCategories}
+              onCategoryChange={setSelectedCategories}
+            />
+          </div>
 
           {/* Main Content */}
-          <div className="flex-1">
+          <div className="flex-1 min-w-0">
             {/* Filter Bar */}
             <FilterBar
               sortBy={sortBy}
@@ -165,10 +167,12 @@ const Index = () => {
           </div>
 
           {/* Right Sidebar - Store Filter */}
-          <StoreFilter
-            selectedStores={selectedStores}
-            onStoreChange={setSelectedStores}
-          />
+          <div className="flex-shrink-0">
+            <StoreFilter
+              selectedStores={selectedStores}
+              onStoreChange={setSelectedStores}
+            />
+          </div>
         </div>
       </main>
 
