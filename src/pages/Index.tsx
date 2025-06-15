@@ -1,6 +1,9 @@
+
 import React, { useState, useMemo } from "react";
 import Header from "@/components/Header";
 import FilterBar from "@/components/FilterBar";
+import FilterSidebar from "@/components/FilterSidebar";
+import StoreFilter from "@/components/StoreFilter";
 import DealGrid from "@/components/DealGrid";
 import { sampleDeals } from "@/data/sampleDeals";
 
@@ -9,6 +12,11 @@ const Index = () => {
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
   const [loading, setLoading] = useState(false);
+  
+  // New filter states
+  const [priceRange, setPriceRange] = useState<[number, number]>([0, 500]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
+  const [selectedStores, setSelectedStores] = useState<string[]>([]);
 
   // Filter and sort deals based on current state
   const filteredAndSortedDeals = useMemo(() => {
@@ -20,6 +28,41 @@ const Index = () => {
         deal.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         deal.store.toLowerCase().includes(searchQuery.toLowerCase())
       );
+    }
+
+    // Filter by price range
+    deals = deals.filter(deal => {
+      const price = parseFloat(deal.price.replace('$', ''));
+      return price >= priceRange[0] && price <= priceRange[1];
+    });
+
+    // Filter by selected stores
+    if (selectedStores.length > 0) {
+      deals = deals.filter(deal => 
+        selectedStores.some(store => 
+          deal.store.toLowerCase().includes(store.toLowerCase())
+        )
+      );
+    }
+
+    // Filter by categories (basic implementation - in real app you'd have category data)
+    if (selectedCategories.length > 0) {
+      deals = deals.filter(deal => {
+        // Simple category matching based on title keywords
+        const title = deal.title.toLowerCase();
+        return selectedCategories.some(category => {
+          if (category.includes('women') || category.includes('dresses')) {
+            return title.includes('dress') || title.includes('women');
+          }
+          if (category.includes('men')) {
+            return title.includes('men') || title.includes('shirt');
+          }
+          if (category.includes('technology')) {
+            return title.includes('phone') || title.includes('laptop') || title.includes('tech');
+          }
+          return false;
+        });
+      });
     }
 
     // Sort deals
@@ -46,7 +89,7 @@ const Index = () => {
     }
 
     return deals;
-  }, [searchQuery, sortBy]);
+  }, [searchQuery, sortBy, priceRange, selectedCategories, selectedStores]);
 
   const handleSearch = () => {
     setLoading(true);
@@ -89,23 +132,43 @@ const Index = () => {
           </div>
         </div>
 
-        {/* Filter Bar */}
-        <FilterBar
-          sortBy={sortBy}
-          onSortChange={setSortBy}
-          viewMode={viewMode}
-          onViewModeChange={setViewMode}
-          totalDeals={filteredAndSortedDeals.length}
-        />
+        {/* Main Content with Sidebars */}
+        <div className="flex gap-6">
+          {/* Left Sidebar - Filters */}
+          <FilterSidebar
+            priceRange={priceRange}
+            onPriceRangeChange={setPriceRange}
+            selectedCategories={selectedCategories}
+            onCategoryChange={setSelectedCategories}
+          />
 
-        {/* Deals Grid */}
-        <DealGrid deals={filteredAndSortedDeals} loading={loading} />
+          {/* Main Content */}
+          <div className="flex-1">
+            {/* Filter Bar */}
+            <FilterBar
+              sortBy={sortBy}
+              onSortChange={setSortBy}
+              viewMode={viewMode}
+              onViewModeChange={setViewMode}
+              totalDeals={filteredAndSortedDeals.length}
+            />
 
-        {/* Load More Button */}
-        <div className="text-center mt-12">
-          <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
-            Load More Deals
-          </button>
+            {/* Deals Grid */}
+            <DealGrid deals={filteredAndSortedDeals} loading={loading} />
+
+            {/* Load More Button */}
+            <div className="text-center mt-12">
+              <button className="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-lg font-medium transition-colors">
+                Load More Deals
+              </button>
+            </div>
+          </div>
+
+          {/* Right Sidebar - Store Filter */}
+          <StoreFilter
+            selectedStores={selectedStores}
+            onStoreChange={setSelectedStores}
+          />
         </div>
       </main>
 
