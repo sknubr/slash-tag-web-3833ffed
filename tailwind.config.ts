@@ -53,21 +53,29 @@ export default {
 					DEFAULT: 'hsl(var(--card))',
 					foreground: 'hsl(var(--card-foreground))'
 				},
-				sidebar: {
-					DEFAULT: 'hsl(var(--sidebar-background))',
-					foreground: 'hsl(var(--sidebar-foreground))',
-					primary: 'hsl(var(--sidebar-primary))',
-					'primary-foreground': 'hsl(var(--sidebar-primary-foreground))',
-					accent: 'hsl(var(--sidebar-accent))',
-					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
-					border: 'hsl(var(--sidebar-border))',
-					ring: 'hsl(var(--sidebar-ring))'
+				countryFlag: {
+					DEFAULT: 'hsl(var(--country-flag-bg))'
+				},
+				promoHoliday: {
+					DEFAULT: 'hsl(var(--promo-holiday-bg))'
+				},
+				promoDiscount: {
+					DEFAULT: 'hsl(var(--promo-discount-bg))'
+				},
+				promoZara: {
+					DEFAULT: 'hsl(var(--promo-zara-bg))'
 				}
 			},
+			fontFamily: {
+				sans: ['-apple-system', 'BlinkMacSystemFont', '"Segoe UI"', 'Roboto', 'sans-serif']
+			},
 			borderRadius: {
-				lg: 'var(--radius)',
-				md: 'calc(var(--radius) - 2px)',
-				sm: 'calc(var(--radius) - 4px)'
+				lg: 'var(--radius)', // This is 0.5rem (8px)
+				md: 'calc(var(--radius) - 2px)', // 6px
+				sm: 'calc(var(--radius) - 4px)', // 4px
+				xl: 'calc(var(--radius) + 4px)', // 12px
+				'2xl': 'calc(var(--radius) + 8px)', // 16px
+				'3xl': '25px', // for search input like elements
 			},
 			keyframes: {
 				'accordion-down': {

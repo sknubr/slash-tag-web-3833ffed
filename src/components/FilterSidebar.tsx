@@ -1,95 +1,133 @@
 
-import React from "react";
-import { ChevronDown, ChevronUp } from "lucide-react";
-import { Slider } from "@/components/ui/slider";
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import React, { useState, useEffect } from "react";
+// Removed ChevronDown, ChevronUp, Slider, Accordion components and related imports
 
 interface FilterSidebarProps {
-  priceRange: [number, number];
-  onPriceRangeChange: (range: [number, number]) => void;
-  selectedCategories: string[];
-  onCategoryChange: (categories: string[]) => void;
+  // priceRange is now an object with min and max, or could be two separate props
+  priceRange: { min: number | string; max: number | string };
+  onPriceRangeChange: (newRange: { min: number | string; max: number | string }) => void;
+  selectedCategories: string[]; // Array of selected category item strings e.g. ["Dresses", "Phones"]
+  onCategoryChange: (categoryItem: string) => void; // Called when a list item is clicked
 }
+
+// Simplified category structure based on the new design
+const filterData = [
+  {
+    title: "Women",
+    items: ["Dresses", "Jeans", "Shoes", "Tops", "Jackets"],
+  },
+  {
+    title: "Men",
+    items: ["Shirts", "Jeans", "Shoes", "Suits", "Jackets"],
+  },
+  {
+    title: "Technology",
+    items: ["Smartphones", "Laptops", "Headphones", "Cameras", "Drones"],
+  },
+  {
+    title: "Home & Garden",
+    items: ["Furniture", "Decor", "Lighting", "Kitchenware", "Gardening"],
+  }
+];
+
 
 const FilterSidebar: React.FC<FilterSidebarProps> = ({
   priceRange,
   onPriceRangeChange,
   selectedCategories,
-  onCategoryChange
+  onCategoryChange,
 }) => {
-  const categories = [
-    { id: 'women', label: 'Women', subcategories: ['Dresses', 'Shoes', 'Jackets'] },
-    { id: 'men', label: 'Men', subcategories: ['Shirts', 'Pants', 'Shoes'] },
-    { id: 'technology', label: 'Technology', subcategories: ['Phones', 'Laptops', 'Accessories'] },
-    { id: 'home', label: 'Home', subcategories: ['Furniture', 'Decor', 'Kitchen'] },
-    { id: 'kids', label: 'Kids', subcategories: ['Clothing', 'Toys', 'Books'] },
-    { id: 'fragrances', label: 'Fragrances', subcategories: ['Perfume', 'Cologne', 'Body Spray'] }
-  ];
+  // Local state for input fields to allow users to type freely
+  const [minPriceInput, setMinPriceInput] = useState<string | number>(priceRange.min);
+  const [maxPriceInput, setMaxPriceInput] = useState<string | number>(priceRange.max);
 
-  const handleCategoryToggle = (categoryId: string) => {
-    const updated = selectedCategories.includes(categoryId)
-      ? selectedCategories.filter(id => id !== categoryId)
-      : [...selectedCategories, categoryId];
-    onCategoryChange(updated);
+  useEffect(() => {
+    setMinPriceInput(priceRange.min);
+    setMaxPriceInput(priceRange.max);
+  }, [priceRange]);
+
+  const handleMinPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMinPriceInput(e.target.value);
+  };
+
+  const handleMaxPriceChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setMaxPriceInput(e.target.value);
+  };
+
+  // Call onPriceRangeChange when input loses focus or on Enter key
+  const handlePriceBlur = () => {
+    let newMin = parseFloat(minPriceInput as string);
+    let newMax = parseFloat(maxPriceInput as string);
+    if (isNaN(newMin)) newMin = 0; // Or keep previous value from prop
+    if (isNaN(newMax)) newMax = Infinity; // Or keep previous value from prop
+    onPriceRangeChange({ min: newMin, max: newMax });
+  };
+
+  const handlePriceKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === 'Enter') {
+      handlePriceBlur();
+      (e.target as HTMLInputElement).blur(); // Optional: remove focus
+    }
+  };
+
+  const handleCategoryItemClick = (item: string) => {
+    onCategoryChange(item); // Parent component will handle adding/removing from selectedCategories
   };
 
   return (
-    <div className="w-56 bg-white border-r border-gray-200 p-4 h-full overflow-y-auto">
-      <h3 className="font-semibold text-lg mb-4">Filter</h3>
+    <div className="w-[250px] bg-card rounded-xl p-5 shadow-lg h-fit sticky top-[100px]"> {/* Added sticky positioning relative to header */}
+      <h3 className="text-base font-semibold mb-4 text-foreground">Filter Results</h3>
       
       {/* Price Filter */}
-      <div className="mb-6">
-        <h4 className="font-medium mb-3">Price</h4>
-        <div className="px-2">
-          <Slider
-            value={priceRange}
-            onValueChange={(value) => onPriceRangeChange(value as [number, number])}
-            max={500}
-            min={0}
-            step={10}
-            className="mb-3"
+      <div className="mb-6 filter-section">
+        <h4 className="text-sm font-medium mb-2.5 text-foreground">Price</h4>
+        <div className="flex items-center gap-2.5 my-2.5">
+          <input
+            type="text"
+            id="min-price-input"
+            name="min-price-input"
+            placeholder="$10"
+            value={minPriceInput}
+            onChange={handleMinPriceChange}
+            onBlur={handlePriceBlur}
+            onKeyPress={handlePriceKeyPress}
+            className="w-16 p-2 border border-input rounded text-xs focus:ring-1 focus:ring-ring focus:border-ring outline-none"
           />
-          <div className="flex justify-between text-sm text-gray-600">
-            <span>${priceRange[0]}</span>
-            <span>${priceRange[1]}</span>
-          </div>
+          <span className="text-muted-foreground">—</span>
+          <input
+            type="text"
+            id="max-price-input"
+            name="max-price-input"
+            placeholder="$65"
+            value={maxPriceInput}
+            onChange={handleMaxPriceChange}
+            onBlur={handlePriceBlur}
+            onKeyPress={handlePriceKeyPress}
+            className="w-16 p-2 border border-input rounded text-xs focus:ring-1 focus:ring-ring focus:border-ring outline-none"
+          />
         </div>
       </div>
 
       {/* Category Filters */}
-      <Accordion type="multiple" className="w-full">
-        {categories.map((category) => (
-          <AccordionItem key={category.id} value={category.id} className="border-b border-gray-200">
-            <AccordionTrigger className="text-left font-medium py-3 text-sm">
-              {category.label}
-            </AccordionTrigger>
-            <AccordionContent className="pb-3">
-              <div className="space-y-2">
-                <label className="flex items-center space-x-2 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={selectedCategories.includes(category.id)}
-                    onChange={() => handleCategoryToggle(category.id)}
-                    className="rounded border-gray-300"
-                  />
-                  <span className="text-sm">All {category.label}</span>
-                </label>
-                {category.subcategories.map((sub) => (
-                  <label key={sub} className="flex items-center space-x-2 cursor-pointer ml-4">
-                    <input
-                      type="checkbox"
-                      checked={selectedCategories.includes(`${category.id}-${sub.toLowerCase()}`)}
-                      onChange={() => handleCategoryToggle(`${category.id}-${sub.toLowerCase()}`)}
-                      className="rounded border-gray-300"
-                    />
-                    <span className="text-xs text-gray-600">{sub}</span>
-                  </label>
-                ))}
-              </div>
-            </AccordionContent>
-          </AccordionItem>
-        ))}
-      </Accordion>
+      {filterData.map((categorySection) => (
+        <div key={categorySection.title} className="mb-6 filter-section">
+          <h4 className="text-sm font-medium mb-2.5 text-foreground">{categorySection.title}</h4>
+          <ul className="list-none">
+            {categorySection.items.map((item) => (
+              <li
+                key={item}
+                onClick={() => handleCategoryItemClick(item)}
+                className={`py-1.5 text-sm cursor-pointer transition-colors duration-150 rounded-md px-2
+                  ${selectedCategories.includes(item)
+                    ? 'text-primary font-semibold bg-primary/10'
+                    : 'text-muted-foreground hover:text-primary hover:bg-primary/5'}`}
+              >
+                {item}
+              </li>
+            ))}
+          </ul>
+        </div>
+      ))}
     </div>
   );
 };
