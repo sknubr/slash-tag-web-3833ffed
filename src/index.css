@@ -7,87 +7,57 @@
 
 @layer base {
   :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --background: 248 50% 99%; /* approx #f8f9fa */
+    --foreground: 0 0% 20%; /* #333 */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 0 0% 20%; /* #333 */
+    --popover: 0 0% 100%; /* white */
+    --popover-foreground: 0 0% 20%; /* #333 */
+    --primary: 20 100% 60%; /* approx #ff6b35 */
+    --primary-foreground: 0 0% 100%; /* white */
+    --secondary: 210 17% 93%; /* approx #e9ecef */
+    --secondary-foreground: 0 0% 20%; /* #333 */
+    --muted: 220 13% 94%; /* approx #dee2e6 */
+    --muted-foreground: 0 0% 40%; /* #666 */
+    --accent: 30 98% 55%; /* approx #f7931e */
+    --accent-foreground: 0 0% 100%; /* white */
+    --destructive: 354 70% 54%; /* #dc3545 */
+    --destructive-foreground: 0 0% 100%; /* white */
+    --border: 210 17% 93%; /* #e9ecef - can be same as secondary or a new one */
+    --input: 210 17% 93%; /* #e9ecef */
+    --ring: 20 100% 60%; /* #ff6b35 for focus */
+    --radius: 0.5rem; /* default, can be overridden by components */
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 222.2 47.4% 11.2%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
-    --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-
-    /* Custom design system colors */
-    --deals-primary: #2563eb;
-    --deals-primary-hover: #1d4ed8;
-    --deals-secondary: #64748b;
-    --deals-accent: #f59e0b;
-    --deals-background: #f8fafc;
-    --deals-card: #ffffff;
-    --deals-border: #e2e8f0;
-    --deals-text: #1e293b;
-    --deals-text-muted: #64748b;
-    --deals-success: #10b981;
-    --deals-danger: #ef4444;
+    /* Additional colors from the sample */
+    --country-flag-bg: 223 100% 20%; /* #002868 */
+    --promo-holiday-bg: 190 78% 41%; /* #17a2b8 */
+    --promo-discount-bg: 28 98% 53%; /* #fd7e14 */
+    --promo-zara-bg: 208 7% 46%; /* #6c757d */
+    --action-btn-hover-bg: 248 50% 99%; /* #f8f9fa */
+    --store-item-border: 216 14% 95%; /* #f1f3f4 */
+    --original-price-text: 0 0% 60%; /* #999 */
   }
 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --background: 248 50% 99%; /* approx #f8f9fa */
+    --foreground: 0 0% 20%; /* #333 */
+    --card: 0 0% 100%; /* white */
+    --card-foreground: 0 0% 20%; /* #333 */
+    --popover: 0 0% 100%; /* white */
+    --popover-foreground: 0 0% 20%; /* #333 */
+    --primary: 20 100% 60%; /* approx #ff6b35 */
+    --primary-foreground: 0 0% 100%; /* white */
+    --secondary: 210 17% 93%; /* approx #e9ecef */
+    --secondary-foreground: 0 0% 20%; /* #333 */
+    --muted: 220 13% 94%; /* approx #dee2e6 */
+    --muted-foreground: 0 0% 40%; /* #666 */
+    --accent: 30 98% 55%; /* approx #f7931e */
+    --accent-foreground: 0 0% 100%; /* white */
+    --destructive: 354 70% 54%; /* #dc3545 */
+    --destructive-foreground: 0 0% 100%; /* white */
+    --border: 210 17% 93%; /* #e9ecef - can be same as secondary or a new one */
+    --input: 210 17% 93%; /* #e9ecef */
+    --ring: 20 100% 60%; /* #ff6b35 for focus */
   }
 }
 
@@ -98,36 +68,5 @@
 
   body {
     @apply bg-background text-foreground font-sans;
-    background-color: var(--deals-background);
-    color: var(--deals-text);
-  }
-}
-
-@layer components {
-  .deals-card {
-    @apply bg-white rounded-xl shadow-sm border border-gray-200 hover:shadow-lg transition-all duration-300;
-    background-color: var(--deals-card);
-    border-color: var(--deals-border);
-  }
-
-  .deals-button-primary {
-    @apply px-6 py-3 rounded-lg font-semibold text-white transition-all duration-200 hover:scale-105;
-    background-color: var(--deals-primary);
-  }
-
-  .deals-button-primary:hover {
-    background-color: var(--deals-primary-hover);
-  }
-
-  .deals-text-primary {
-    color: var(--deals-primary);
-  }
-
-  .deals-text-muted {
-    color: var(--deals-text-muted);
-  }
-
-  .deals-gradient {
-    background: linear-gradient(135deg, var(--deals-primary) 0%, var(--deals-accent) 100%);
   }
 }

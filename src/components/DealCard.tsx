@@ -1,19 +1,20 @@
 
 import React from "react";
-import { ExternalLink, Star, Clock, Heart, Tag, TrendingUp } from "lucide-react";
+// Removed Star, Clock, Heart, Tag, TrendingUp, ExternalLink as they are no longer used or replaced by text/simple icons
+// Potential future icons: ThumbsUp, ThumbsDown, Bookmark, ExternalLink, MoreHorizontal
 
 interface Deal {
   id: number;
   title: string;
   price: string;
   originalPrice?: string;
-  discount?: string;
+  discount?: string; // This will be displayed directly if available
   image: string;
-  store: string;
-  rating?: number;
-  reviewCount?: number;
-  timeLeft?: string;
-  url: string;
+  store: string; // Kept in interface, though not displayed in this card version
+  rating?: number; // Kept in interface, though not displayed
+  reviewCount?: number; // Kept in interface, though not displayed
+  timeLeft?: string; // Kept in interface, though not displayed
+  url: string; // Kept for potential use with ↗ button
 }
 
 interface DealCardProps {
@@ -21,105 +22,83 @@ interface DealCardProps {
 }
 
 const DealCard: React.FC<DealCardProps> = ({ deal }) => {
-  const discountPercent = deal.originalPrice && deal.price 
-    ? Math.round((1 - parseFloat(deal.price.replace('$', '')) / parseFloat(deal.originalPrice.replace('$', ''))) * 100)
-    : null;
+  const discountPercent = deal.discount
+    ? deal.discount
+    : (deal.originalPrice && deal.price
+      ? `${Math.round((1 - parseFloat(deal.price.replace('$', '')) / parseFloat(deal.originalPrice.replace('$', ''))) * 100)}%`
+      : null);
+
+  // Placeholder for image if deal.image is not a valid URL or for loading states
+  const imageStyle = deal.image
+    ? { backgroundImage: `url(${deal.image})` }
+    : { backgroundImage: 'linear-gradient(to bottom right, var(--muted), var(--secondary))' };
+
 
   return (
-    <div className="deals-card group overflow-hidden">
-      {/* Deal Image */}
-      <div className="relative aspect-[4/3] bg-gradient-to-br from-gray-100 to-gray-200 overflow-hidden">
-        <img 
-          src={deal.image} 
-          alt={deal.title}
-          className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
-        />
-        
-        {/* Overlay badges */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-        
+    <div className="bg-card rounded-xl overflow-hidden shadow-lg transition-transform duration-300 ease-in-out hover:translate-y-[-5px] hover:shadow-2xl">
+      {/* Product Image */}
+      <div
+        className="w-full h-[200px] bg-cover bg-center relative"
+        style={imageStyle}
+        role="img"
+        aria-label={deal.title}
+      >
+        {/* Discount Badge */}
         {discountPercent && (
-          <div className="absolute top-3 left-3 flex items-center space-x-1 bg-red-500 text-white px-3 py-1.5 rounded-full text-sm font-bold shadow-lg">
-            <Tag size={14} />
-            <span>-{discountPercent}%</span>
+          <div className="absolute top-2.5 left-2.5 bg-destructive text-destructive-foreground px-2 py-1 rounded text-xs font-bold">
+            {discountPercent.endsWith('%') ? discountPercent : `${discountPercent}%`}
           </div>
         )}
-        
-        {deal.timeLeft && (
-          <div className="absolute top-3 right-3 flex items-center space-x-1 bg-orange-500 text-white px-3 py-1.5 rounded-full text-xs font-semibold shadow-lg">
-            <Clock size={12} />
-            <span>{deal.timeLeft}</span>
-          </div>
-        )}
-
-        {/* Wishlist button */}
-        <button className="absolute bottom-3 right-3 p-2.5 bg-white/90 backdrop-blur-sm rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-all duration-300 hover:bg-white hover:scale-110">
-          <Heart size={16} className="text-gray-600 hover:text-red-500" />
-        </button>
       </div>
 
-      {/* Deal Content */}
-      <div className="p-5 space-y-4">
-        {/* Store badge */}
-        <div className="flex items-center justify-between">
-          <span className="inline-flex items-center px-2.5 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-medium">
-            {deal.store}
-          </span>
-          {discountPercent && discountPercent >= 50 && (
-            <div className="flex items-center space-x-1 text-green-600">
-              <TrendingUp size={14} />
-              <span className="text-xs font-semibold">Hot Deal</span>
-            </div>
-          )}
-        </div>
-
-        {/* Title */}
-        <h3 className="font-semibold text-gray-900 line-clamp-2 leading-tight group-hover:text-blue-600 transition-colors">
+      {/* Product Info */}
+      <div className="p-4">
+        {/* Product Title */}
+        <h3 className="text-sm text-muted-foreground mb-2 truncate" title={deal.title}>
           {deal.title}
         </h3>
         
-        {/* Price section */}
-        <div className="space-y-2">
-          <div className="flex items-baseline space-x-2">
-            <span className="text-2xl font-bold text-gray-900">{deal.price}</span>
-            {deal.originalPrice && (
-              <span className="text-sm text-gray-500 line-through">{deal.originalPrice}</span>
-            )}
-          </div>
-          
-          {discountPercent && (
-            <div className="text-sm font-medium text-green-600">
-              You save ${(parseFloat(deal.originalPrice?.replace('$', '') || '0') - parseFloat(deal.price.replace('$', ''))).toFixed(2)}
-            </div>
+        {/* Product Price */}
+        <div className="flex justify-between items-center">
+          <span className="text-lg font-bold text-foreground">{deal.price}</span>
+          {deal.originalPrice && (
+            <span className="text-sm text-[hsl(var(--original-price-text))] line-through">
+              {deal.originalPrice}
+            </span>
           )}
         </div>
+      </div>
 
-        {/* Rating */}
-        {deal.rating && (
-          <div className="flex items-center space-x-2">
-            <div className="flex items-center">
-              {[...Array(5)].map((_, i) => (
-                <Star 
-                  key={i} 
-                  size={14} 
-                  className={i < Math.floor(deal.rating!) ? "fill-yellow-400 text-yellow-400" : "text-gray-300"} 
-                />
-              ))}
-            </div>
-            <span className="text-sm text-gray-600">({deal.reviewCount})</span>
-          </div>
-        )}
+      {/* Product Actions */}
+      <div className="flex justify-between items-center p-4 border-t border-[hsl(var(--store-item-border))]">
+        {/* Action Buttons (Left) */}
+        <div className="flex gap-2.5">
+          <button className="bg-transparent border-none cursor-pointer p-2 rounded-md transition-colors hover:bg-[hsl(var(--action-btn-hover-bg))] text-muted-foreground hover:text-foreground">
+            👍 +37
+          </button>
+          <button className="bg-transparent border-none cursor-pointer p-2 rounded-md transition-colors hover:bg-[hsl(var(--action-btn-hover-bg))] text-muted-foreground hover:text-foreground">
+            👎
+          </button>
+        </div>
 
-        {/* Action button */}
-        <a 
-          href={deal.url}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full deals-button-primary flex items-center justify-center space-x-2 group-hover:shadow-lg"
-        >
-          <span>View Deal</span>
-          <ExternalLink size={16} />
-        </a>
+        {/* Action Buttons (Right) */}
+        <div className="flex gap-2.5">
+          <button className="bg-transparent border-none cursor-pointer p-2 rounded-md transition-colors hover:bg-[hsl(var(--action-btn-hover-bg))] text-muted-foreground hover:text-foreground">
+            🔖
+          </button>
+          <a
+            href={deal.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="bg-transparent border-none cursor-pointer p-2 rounded-md transition-colors hover:bg-[hsl(var(--action-btn-hover-bg))] text-muted-foreground hover:text-foreground"
+            aria-label="View deal source"
+          >
+            ↗
+          </a>
+          <button className="bg-transparent border-none cursor-pointer p-2 rounded-md transition-colors hover:bg-[hsl(var(--action-btn-hover-bg))] text-muted-foreground hover:text-foreground">
+            ⋯
+          </button>
+        </div>
       </div>
     </div>
   );
